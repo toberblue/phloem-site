@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 100 100" role="img" aria-label="Phloem — a growth-ring cross-section: an outer green phloem ring, a pale sapwood band, a red-brown heartwood core with its pith set slightly off-centre.">
+  <!-- phloem: the outermost living ring — the tissue the app is named for -->
+  <circle cx="50" cy="50" r="47" fill="#2f6f4e"/>
+  <circle cx="50" cy="50" r="45.2" fill="none" stroke="#255c40" stroke-width=".5"/>
+  <!-- sapwood -->
+  <circle cx="50" cy="50" r="37" fill="#e0c079"/>
+  <circle cx="50" cy="50" r="34.5" fill="none" stroke="#caa557" stroke-width=".5"/>
+  <circle cx="50" cy="50" r="28" fill="none" stroke="#caa557" stroke-width=".4"/>
+  <!-- heartwood, pith off-centre so it reads grown, not drawn -->
+  <circle cx="48.5" cy="52" r="19" fill="#7c3b2c"/>
+  <circle cx="48.5" cy="52" r="14" fill="none" stroke="#653023" stroke-width=".5"/>
+  <circle cx="48.5" cy="52" r="8.5" fill="none" stroke="#653023" stroke-width=".5"/>
+  <circle cx="48.5" cy="52" r="2.4" fill="#4f271d"/>
+</svg>
