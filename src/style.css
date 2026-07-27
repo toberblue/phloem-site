@@ -40,6 +40,19 @@ em{font-style:italic;}
 .btn:hover{text-decoration:none; filter:brightness(1.06);}
 .btn.disabled{background:var(--card); color:var(--muted); border:1px solid var(--line); pointer-events:none;}
 .fineprint{color:var(--muted); font-size:.92rem;}
+form.contact{display:flex; flex-direction:column; gap:1rem; max-width:34rem;}
+form.contact label{display:flex; flex-direction:column; gap:.3rem; font-weight:600; font-size:.95rem;}
+form.contact input,form.contact textarea{
+  font:inherit; font-weight:400; color:var(--fg); background:var(--card);
+  border:1px solid var(--line); border-radius:8px; padding:.55rem .7rem;
+}
+form.contact input:focus,form.contact textarea:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent);}
+form.contact fieldset{border:1px solid var(--line); border-radius:8px; padding:.7rem 1rem 1rem; margin:0;}
+form.contact legend{font-size:.95rem; font-weight:600; padding:0 .4rem;}
+form.contact .check{flex-direction:row; align-items:center; gap:.5rem; font-weight:400; margin-top:.4rem;}
+form.contact .check input{accent-color:var(--accent);}
+form.contact .hp{position:absolute; left:-9999px; height:0; width:0; opacity:0;}
+form.contact button{align-self:flex-start; border:0; cursor:pointer; font:inherit; font-weight:600;}
 footer{
   max-width:var(--maxw); margin:0 auto; padding:1.5rem 1.25rem 2.5rem;
   border-top:1px solid var(--line); color:var(--muted); font-size:.9rem;

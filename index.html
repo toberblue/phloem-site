@@ -48,12 +48,32 @@
       <a class="btn disabled" aria-disabled="true" href="#download">macOS — test build coming</a>
     </p>
     <p class="fineprint">Test builds are issued personally for now — write and ask.</p>
+    <p>Windows and Linux: Phloem is built on a toolkit that travels well to both, and we'll happily port it if people want it. If you'd like to test on either when testing opens up, use the form below and tick the platform — you'll go on the list.</p>
   </section>
 
   <section id="contact">
     <h2>Contact</h2>
-    <p>Phloem is made in New Zealand by Peter Matthews.<br>
-    Interested in testing, or in the thinking behind it? <a href="mailto:peter@henley.net.nz">peter@henley.net.nz</a></p>
+    <p>Phloem is made in New Zealand by Peter Matthews. Interested in testing, or in the thinking behind it? Write — this reaches him directly.</p>
+    <form class="contact" method="post" action="/contact">
+      <label>Your name
+        <input name="name" autocomplete="name" maxlength="200">
+      </label>
+      <label>Your email
+        <input name="email" type="email" required autocomplete="email" maxlength="200">
+      </label>
+      <label>Message
+        <textarea name="message" rows="6" required maxlength="5000"></textarea>
+      </label>
+      <fieldset>
+        <legend>I'd like to test Phloem on…</legend>
+        <label class="check"><input type="checkbox" name="platform" value="macOS"> macOS</label>
+        <label class="check"><input type="checkbox" name="platform" value="Windows"> Windows</label>
+        <label class="check"><input type="checkbox" name="platform" value="Linux"> Linux</label>
+      </fieldset>
+      <!-- honeypot: humans never see it, bots fill it -->
+      <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn" type="submit">Send</button>
+    </form>
   </section>
 </main>
 
