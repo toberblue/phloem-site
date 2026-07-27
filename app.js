@@ -52,6 +52,12 @@ function handleContact(req, res) {
     const email = (form.get('email') || '').slice(0, 200).trim();
     const message = (form.get('message') || '').slice(0, 5000).trim();
     const platforms = form.getAll('platform').filter(p => ['macOS', 'Windows', 'Linux'].includes(p));
+    // Time-trap: the page stamps ms-since-load at submit. No stamp means no
+    // script ran (HTML-parsing bot); under 6s means nobody read anything.
+    // Suspect mail is tagged, never dropped — a human is never locked out.
+    const rawElapsed = form.get('elapsed');
+    const elapsed = rawElapsed ? Number(rawElapsed) : NaN;
+    const suspect = !Number.isFinite(elapsed) || elapsed < 6000 || elapsed > 86_400_000;
 
     // Bots that fill the hidden field get a polite lie and no email.
     if (honeypot) { resultPage(res, 200, 'Thank you', 'Your message has been sent.'); return; }
@@ -68,13 +74,14 @@ function handleContact(req, res) {
       `To: ${CONTACT_TO}`,
       `From: Phloem site <noreply@henley.nz>`,
       `Reply-To: ${headerSafe(name ? `${name} <${email}>` : email)}`,
-      `Subject: ${headerSafe('Phloem site contact' + (platforms.length ? ` — test on ${platforms.join(', ')}` : ''))}`,
+      `Subject: ${headerSafe((suspect ? '[suspect] ' : '') + 'Phloem site contact' + (platforms.length ? ` — test on ${platforms.join(', ')}` : ''))}`,
       'Content-Type: text/plain; charset=utf-8',
       '',
       `Name: ${name || '(not given)'}`,
       `Email: ${email}`,
       `Test platforms: ${platforms.length ? platforms.join(', ') : '(none ticked)'}`,
       `IP: ${ip}`,
+      `Form time: ${Number.isFinite(elapsed) ? Math.round(elapsed / 1000) + 's' : 'no stamp (no script ran)'}`,
       '',
       message,
       '',
@@ -92,7 +99,7 @@ function handleContact(req, res) {
       clearTimeout(timer);
       if (res.writableEnded) return;
       if (code === 0) {
-        console.log(`contact: sent (${email}${platforms.length ? ', ' + platforms.join('/') : ''})`);
+        console.log(`contact: sent${suspect ? ' [suspect]' : ''} (${email}${platforms.length ? ', ' + platforms.join('/') : ''})`);
         resultPage(res, 200, 'Thank you', 'Your message has been sent.');
       } else {
         console.error(`contact: sendmail exited ${code}: ${errOut.trim()}`);

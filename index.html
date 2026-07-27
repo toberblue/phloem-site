@@ -72,8 +72,17 @@
       </fieldset>
       <!-- honeypot: humans never see it, bots fill it -->
       <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <!-- time-trap: filled at submit with ms since page load; instant or
+           script-less submissions get tagged [suspect] server-side, never dropped -->
+      <input type="hidden" name="elapsed" value="">
       <button class="btn" type="submit">Send</button>
     </form>
+    <script>
+      const t0 = Date.now();
+      document.querySelector('form.contact').addEventListener('submit', function () {
+        this.elements.elapsed.value = String(Date.now() - t0);
+      });
+    </script>
   </section>
 </main>
 
