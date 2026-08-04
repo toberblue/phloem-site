@@ -185,14 +185,27 @@ Lose the line and the only remedy is to issue another.
 ## Why it looks like this
 
 The pilot was designed around nginx doing the gating with `auth_request`,
-`error_page 401 = /welcome`, and a `location /engine/` proxy_pass. **None of
-that can be installed here.** This is a managed container: there is no sudo,
-`/etc/nginx/sites-available/default` is owned by root, and it contains a
-single `location /` pointing at port 3000. So `app.js` does those three jobs
-instead. The boundaries are identical; only the thing enforcing them moved
-inwards, and the nginx blocks that were written from documentation and never
-run against a real nginx have stopped existing rather than needing to be
-debugged.
+`error_page 401 = /welcome`, and a `location /engine/` proxy_pass. `app.js`
+does those three jobs instead. The boundaries are identical; only the thing
+enforcing them moved inwards, and the nginx blocks that were written from
+documentation and never run against a real nginx have stopped existing
+rather than needing to be debugged.
+
+**THAT MOVE WAS MADE AGAINST A CONSTRAINT THAT WAS PARTLY WRONG**, and it is
+recorded here so nobody re-derives the wrong reason. On 4 August the nginx
+config was declared unchangeable — no sudo, `/etc/nginx/sites-available/default`
+owned by root. **It is editable**, at `/container/config/nginx/sites-available/default`,
+which is owned by `phloem` and is the *same inode* as the `/etc/nginx` path.
+The host mounts it in. Change it and run
+`supervisorctl -s unix:///container/system/run/supervisor.sock restart nginx`
+— a few seconds of downtime. The mistake was inferring "no sudo" from the
+server notes into "nginx cannot be configured", without checking.
+
+**The design stands anyway, on reasons that do not depend on the mistake:**
+one process instead of three, no `auth_request` subrequest on every static
+asset, and the door has to serve `/enter` and `/welcome` from somewhere
+regardless. But the `auth_request` route was available, and if this ever
+wants revisiting, it is a real option and not a blocked one.
 
 **The 5-second ceiling.** nginx here sets `proxy_read_timeout 5s`, which
 applies to every response this process gives. A margin call measured **3.1s**
