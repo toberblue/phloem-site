@@ -1,0 +1,6 @@
+phloem-door-ledger.json
+phloem-door-ledger.json.tmp
+# The server's own file — who opened their link, and when. Written by the
+# long-lived process, never by the CLI (see the one-writer rule in store.mjs).
+phloem-door-ledger.json.usage
+phloem-door-ledger.json.usage.tmp
