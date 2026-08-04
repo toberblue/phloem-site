@@ -449,6 +449,23 @@ const server = createServer(async (req, res) => {
       return send(res, 504, { error: 'the margin cannot reach its source' });
     }
     if (err instanceof Anthropic.APIError) {
+      // THE HOUSE'S OWN KEY WAS REFUSED — expired, revoked, mistyped, or
+      // scoped too narrowly (2026-08-04, from the gardener's question
+      // about expiry dates). Said LOUDLY and in its own words, because
+      // this is the one upstream failure that will not fix itself and the
+      // one nobody will otherwise notice: every writer's margin simply
+      // goes quiet, and a quiet margin is the ordinary correct answer to
+      // most pages. console.error, not warn, so it stands out in
+      // phloem-proxy-stderr.log — which is the only place on this box
+      // that can tell you WHICH key is the problem.
+      if (err.status === 401 || err.status === 403) {
+        console.error(
+          `[phloem-proxy] THE ANTHROPIC KEY WAS REFUSED (${err.status}). ` +
+            `Every margin on this box is silent until it is replaced: put a ` +
+            `new key in supervisord.conf and restart phloem-proxy.`
+        );
+        return send(res, 502, { error: 'the margin’s key was refused' });
+      }
       console.warn(`[phloem-proxy] ${user} upstream ${err.status}`);
       return send(res, 502, { error: 'the margin could not answer' });
     }
