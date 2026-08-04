@@ -38,6 +38,36 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Anthropic from '@anthropic-ai/sdk';
 
+// ------------------------------------------------------------- the clock
+//
+// EVERY LINE IS STAMPED (2026-08-04). The log carried no times at all,
+// and the first question ever asked of it could not be answered: "the
+// margin failed about half an hour ago — was it slow, or was it
+// refused?" Both leave the same silence on the page, they want opposite
+// remedies, and without a clock the log cannot tell them apart even
+// though it holds both answers.
+//
+// STAMPED AT THE CONSOLE, not at each call site, so a line added later
+// cannot forget — the same discipline as fateOf() and the pile's
+// subtraction: what every writer must remember is what one writer
+// eventually forgets. It also catches anything the SDK says on its way
+// past, which is exactly the output nobody thought to stamp.
+//
+// LOCAL TIME, with the offset. This box runs Pacific/Auckland, so local
+// IS the gardener's calendar — and the offset rides along so a log read
+// from anywhere else is not a puzzle. Third outing for a lesson recorded
+// twice already (engine.ts's meter, then every export dated a day early
+// until 2026-07-21): a time a person reads must be rendered in theirs.
+const clock = new Intl.DateTimeFormat('sv-SE', {
+  year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', second: '2-digit',
+  hour12: false, timeZoneName: 'shortOffset',
+});
+for (const level of ['log', 'warn', 'error']) {
+  const raw = console[level].bind(console);
+  console[level] = (...args) => raw(clock.format(new Date()), ...args);
+}
+
 // ---------------------------------------------------------------- config
 
 const HERE = dirname(fileURLToPath(import.meta.url));

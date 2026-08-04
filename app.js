@@ -42,6 +42,20 @@ import {
   LANDING,
 } from './door/session.mjs';
 
+// EVERY LINE IS STAMPED (2026-08-04) — see the same block in
+// proxy/server.mjs for the reasoning. The two processes' logs are read
+// side by side when something is wrong, and one of them carrying times
+// while the other does not would be worse than neither.
+const clock = new Intl.DateTimeFormat('sv-SE', {
+  year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', second: '2-digit',
+  hour12: false, timeZoneName: 'shortOffset',
+});
+for (const level of ['log', 'warn', 'error']) {
+  const raw = console[level].bind(console);
+  console[level] = (...args) => raw(clock.format(new Date()), ...args);
+}
+
 const ROOT = path.join(import.meta.dirname, 'dist');
 // The built Phloem app, copied in from the phloem repo (see DEPLOY.md).
 // Deliberately NOT under dist/: it is not built by this repo's Vite, and
