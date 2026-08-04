@@ -28,16 +28,35 @@ proxy stays a separate process, and why it binds loopback and trusts the
 
 Everything below is run as `phloem` over `ssh henley`. None of it needs sudo.
 
-**1. The Anthropic key, in a file rather than a config.**
+**1. The Anthropic key, in supervisord.conf — on THIS box, and reluctantly.**
+
+The proxy prefers `$ANTHROPIC_API_KEY` and falls back to a key FILE, and the
+file is the better arrangement everywhere it works: a config file gets edited,
+backed up and read over shoulders, while a file whose only job is one secret
+can be 600 and left alone. It is also where the desktop app keeps its key.
+
+**It does not work here, and the reason is worth knowing before you try it
+again** (learned 2026-08-04). Supervisord runs these processes as a uid that
+is NOT the `phloem` you are when you ssh in. `/etc/passwd` here holds only
+`phloem:x:33:33` and no `www-data` at all, yet supervisord accepts `www-data`
+and rejects `phloem` — it has its own view. So a key file at mode 600 in your
+home is unreadable by the process, and the proxy does what it is built to do:
+refuse to start rather than run keyless, naming the path it looked in.
+
+The clue was in the deploy line all along. `chmod -R a+rX .` exists precisely
+because the web process can only read WORLD-READABLE files; if it shared your
+uid that chmod would never have been needed.
+
+The alternative to a config entry was chmod 644 on an API key, which is worse.
+supervisord.conf is `rw-r-----`, and already holds the door secret. So:
 
 ```
-ssh henley 'mkdir -p /home/phloem/.phloem && chmod 700 /home/phloem/.phloem && cat > /home/phloem/.phloem/api-key && chmod 600 /home/phloem/.phloem/api-key'
+ssh henley 'K=$(cat /home/phloem/.phloem/api-key); sed -i "s|^environment=PHLOEM_ENGINE_MODEL=.*|environment=PHLOEM_ENGINE_MODEL=\"claude-haiku-4-5\",ANTHROPIC_API_KEY=\"$K\"|" /container/config/supervisord.conf'
 ```
 
-Paste the key, then Ctrl-D. It is deliberately not an environment variable in
-supervisord.conf: a config file is edited, backed up and read over shoulders;
-a file whose only job is one secret can be 600 and left alone. This is also
-where the desktop app keeps its key, so there is one convention, not two.
+Keep a copy at `/home/phloem/.phloem/api-key` anyway — it is where you paste a
+new key, and the command above reads from it, so the secret never passes
+through a shell history or a clipboard.
 
 **2. The door secret.** Any 32+ random characters. It goes in supervisord's
 environment because it is the one secret `app.js` genuinely needs:
@@ -58,11 +77,14 @@ environment=HOME=/container/application,PHLOEM_DOOR_SECRET="…the value from st
 
 [program:phloem-proxy]
 command=/usr/local/bin/node /container/application/proxy/server.mjs
-environment=PHLOEM_ENGINE_MODEL="claude-haiku-4-5",PHLOEM_KEY_FILE="/home/phloem/.phloem/api-key"
-user=phloem
+environment=PHLOEM_ENGINE_MODEL="claude-haiku-4-5",ANTHROPIC_API_KEY="…"
+user=www-data
 stdout_logfile=/container/logs/supervisor/%(program_name)s-stdout.log
 stderr_logfile=/container/logs/supervisor/%(program_name)s-stderr.log
 ```
+
+(Leave `ANTHROPIC_API_KEY` empty here and fill it with the command in step 1,
+so the key is never typed into a shell.)
 
 Then:
 
@@ -70,20 +92,34 @@ Then:
 ssh henley "supervisorctl -s unix:///container/system/run/supervisor.sock reread && supervisorctl -s unix:///container/system/run/supervisor.sock update"
 ```
 
-**`phloem` AND `www-data` ARE THE SAME ACCOUNT** — checked 2026-08-04:
-`getent passwd 33` returns `phloem`, and the name `www-data` does not resolve
-at all on this box. So what you create over ssh is owned by the very uid the
-server runs as, and there is no permissions maze: the key file, the invite
-ledger and the proxy's meter all just work. The existing stanza says
-`user=www-data` and has been running since July; the new one says
-`user=phloem` because that is the name that certainly resolves, and it is the
-same uid either way.
+**`phloem` AND `www-data` ARE THE SAME ACCOUNT, uid 33** — so what you create
+over ssh is owned by the very uid the servers run as, and there is no
+permissions maze: the key file, the invite ledger and the proxy's meter all
+just work.
 
-**The key path is absolute on purpose.** `HOME` for the site process is
-`/container/application` — the git clone — and a secret must not live inside
-a git clone that the deploy runs `chmod -R a+rX` over. `/home/phloem/.phloem/`
-is outside it, mode 700, and named explicitly so nothing depends on which
-`HOME` a process happened to inherit.
+**ALWAYS WRITE `user=www-data` HERE, NEVER `user=phloem`** (learned the hard
+way, 2026-08-04). The two names disagree depending on who is asking. In an
+ssh shell `getent passwd 33` returns **phloem** and `www-data` does not
+resolve at all — which is why `user=phloem` looked like the safe choice. But
+SUPERVISORD sees the opposite, and refuses to even re-read its config:
+
+    ERROR: CANT_REREAD: Invalid user name phloem in section 'program:phloem-proxy'
+
+Supervisord's view is the one that decides, and it has been running `nodejs`
+as `www-data` since July. Same uid either way, so nothing about file access
+changes — only the name that must appear in this file.
+
+**Never put a secret inside `/container/application`**, whatever else changes.
+`HOME` for the site process points there, so it is the tempting place — and
+the deploy runs `chmod -R a+rX` over the whole clone, which would make the
+secret world-readable, and a stray `git add` would commit it.
+
+**Two things this box will surprise you with, both found on 4 August 2026 and
+both invisible until something refused to start:** supervisord's user names
+and uids are not the ones your ssh shell sees, and `curl localhost` from
+inside the container reports nothing even when a service is perfectly
+healthy. Diagnose from the supervisor logs and from OUTSIDE the box; never
+from a loopback curl inside it.
 
 **MIND THE HOST PANEL.** supervisord.conf is provider-managed territory even
 though it is writable. If the container is ever re-provisioned these two
