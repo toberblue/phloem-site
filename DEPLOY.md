@@ -51,7 +51,7 @@ The alternative to a config entry was chmod 644 on an API key, which is worse.
 supervisord.conf is `rw-r-----`, and already holds the door secret. So:
 
 ```
-ssh henley 'K=$(cat /home/phloem/.phloem/api-key); sed -i "s|^environment=PHLOEM_ENGINE_MODEL=.*|environment=PHLOEM_ENGINE_MODEL=\"claude-haiku-4-5\",ANTHROPIC_API_KEY=\"$K\"|" /container/config/supervisord.conf'
+ssh henley 'K=$(cat /home/phloem/.phloem/api-key); sed -i "s|^environment=PHLOEM_ENGINE_MODEL=.*|environment=PHLOEM_ENGINE_MODEL=\"claude-opus-4-8\",ANTHROPIC_API_KEY=\"$K\"|" /container/config/supervisord.conf'
 ```
 
 Keep a copy at `/home/phloem/.phloem/api-key` anyway — it is where you paste a
@@ -77,7 +77,7 @@ environment=HOME=/container/application,PHLOEM_DOOR_SECRET="…the value from st
 
 [program:phloem-proxy]
 command=/usr/local/bin/node /container/application/proxy/server.mjs
-environment=PHLOEM_ENGINE_MODEL="claude-haiku-4-5",ANTHROPIC_API_KEY="…"
+environment=PHLOEM_ENGINE_MODEL="claude-opus-4-8",ANTHROPIC_API_KEY="…"
 user=www-data
 stdout_logfile=/container/logs/supervisor/%(program_name)s-stdout.log
 stderr_logfile=/container/logs/supervisor/%(program_name)s-stderr.log
@@ -207,14 +207,25 @@ asset, and the door has to serve `/enter` and `/welcome` from somewhere
 regardless. But the `auth_request` route was available, and if this ever
 wants revisiting, it is a real option and not a blocked one.
 
-**The 5-second ceiling.** nginx here sets `proxy_read_timeout 5s`, which
-applies to every response this process gives. A margin call measured **3.1s**
-on Haiku with the real structured-output request — under it, but not
-comfortably, and Opus is slower. A support request to raise it to 60s was
-sent on 4 August 2026. Until it lands, keep `PHLOEM_ENGINE_MODEL` on Haiku
-and treat an occasional 504 in the margin as expected rather than mysterious.
-If the host ever refuses, the fix that needs nobody's permission is to stream
-the proxy's response so each chunk resets nginx's clock.
+**The 5-second ceiling, LIFTED 4 August 2026.** nginx here used to set
+`proxy_read_timeout 5s`, which applies to every response this process gives.
+A margin call measured **3.1s** on Haiku with the real structured-output
+request — under it, but not comfortably, and Opus is slower, so the hosted
+margin was pinned to Haiku while a support request went in. **It is now 60s**
+(see the paragraph above: the config was editable all along), and with the
+ceiling gone the pin went with it — `PHLOEM_ENGINE_MODEL` is
+`claude-opus-4-8`, which is what the 3 August fixture run actually decided.
+Held in reserve and still unneeded: streaming the proxy's response so each
+chunk resets nginx's clock.
+
+**This paragraph outlived its own reason for six hours, and that is the thing
+to learn from it.** The commit that lifted the ceiling rewrote the nginx
+paragraph above and left this one saying "until it lands, keep it on Haiku" —
+so the pilot went on serving a model the record had rejected, for a
+constraint that no longer existed, and the document said that was correct. A
+sentence that reads as current is more dangerous than one that is obviously
+old. **When a blocker is removed, the same commit must remove every
+instruction that existed only because of it.**
 
 **TLS terminates at the host's edge**; this container sees plain HTTP. The
 session cookie is still `Secure`, and correctly so — that flag instructs the
