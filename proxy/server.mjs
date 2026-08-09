@@ -614,6 +614,25 @@ const server = createServer(async (req, res) => {
       console.warn(`[phloem-proxy] ${user} could not reach upstream`);
       return send(res, 504, { error: 'the margin cannot reach its source' });
     }
+    // THE PINNED MODEL HAS BEEN RETIRED (2026-08-10). Checked BEFORE the
+    // generic APIError branch, because a 404 naming a model is the one
+    // upstream failure on this box that is permanent, silent to every
+    // writer, and mended by one environment variable. Every margin on the
+    // box goes quiet at once and each writer sees an ordinary quiet
+    // margin — which is the correct answer to most pages, so nobody
+    // reports it. This log line is the only place that can name it.
+    //
+    // Anthropic publishes retirement dates in advance; nothing arrives on
+    // the wire to warn us, so the warning has to be the failure itself.
+    if (err instanceof Anthropic.NotFoundError) {
+      console.error(
+        `[phloem-proxy] the model "${MODEL}" was NOT FOUND (404) — if it has ` +
+          `been retired, every margin on this box is silent until ` +
+          `PHLOEM_ENGINE_MODEL is set to a current model and the process ` +
+          `restarted. Upstream said: ${String(err.message).slice(0, 160)}`
+      );
+      return send(res, 502, { error: 'the margin cannot reach its source' });
+    }
     if (err instanceof Anthropic.APIError) {
       // THE HOUSE'S OWN KEY WAS REFUSED — expired, revoked, mistyped, or
       // scoped too narrowly (2026-08-04, from the gardener's question
