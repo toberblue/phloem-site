@@ -117,6 +117,49 @@ const API_KEY = process.env.ANTHROPIC_API_KEY || keyFromFile();
 //                      before a pilot, don't adopt it on arithmetic alone.
 const MODEL = process.env.PHLOEM_ENGINE_MODEL ?? 'claude-opus-4-8';
 
+// THE GROUNDED SUMMONS (2026-08-10) — and the reason this file changed
+// on the same day the app did. The margin now searches the web to answer,
+// which means the request carries `tools`, and the head of this file says
+// in as many words that anything the engine does not send is refused
+// rather than forwarded: "no tools". That was true and is now one line
+// out of date, so the capability arrives HERE, deliberately, which is
+// exactly what that rule is for.
+//
+// THE PAGE DOES NOT NAME THE SEARCH TOOL, for the same reason it does not
+// name the model — and here the two are the same fact. The tool has two
+// versions and each runs on a different family: the dynamic-filtering one
+// on Opus and Sonnet, the basic one on Haiku. A mismatch is a 400, not a
+// degradation. Since the MODEL is pinned in this file, the version that
+// matches it can only be decided in this file; a page allowed to choose
+// would be a page able to silence every margin on the box by choosing
+// wrong, without ever naming a model.
+const SEARCH_TOOL = MODEL.startsWith('claude-haiku')
+  ? 'web_search_20250305'
+  : 'web_search_20260209';
+
+// The house's own ceiling on how many searches one answer may run — the
+// client asks, this decides, exactly like max_tokens. A search is priced
+// per use on top of the tokens it drags into context, so this is the
+// dearest dial on the box and the one most worth being ours.
+const MAX_SEARCHES = Number(process.env.PHLOEM_MAX_SEARCHES ?? 4);
+
+// $10 per 1,000 searches, added to the month's estimate alongside the
+// tokens. Left out, the ceiling would under-count every grounded answer
+// by roughly the price of its own tokens on Haiku — the cheaper the
+// model, the larger the share the fee is, which is the opposite of the
+// intuition and the reason it is counted rather than waved through.
+const SEARCH_USD = Number(process.env.PHLOEM_SEARCH_USD ?? 0.01);
+
+// A long search turn PAUSES, and this box resumes it rather than the
+// page. Two reasons, and the second is the load-bearing one: the resumed
+// request must carry the assistant's partial turn back — server tool
+// calls, search results and all — and validating that block by block
+// here would be a far larger door than the one this file opens today,
+// while forwarding it unchecked would give up the whole "rebuilt, not
+// forwarded" discipline. Resuming internally keeps the wire shape a
+// page sends exactly what it was: one user message, no blocks.
+const MAX_PAUSES = 3;
+
 // The ceiling on any single answer. engine.ts asks for 1024; this is the
 // house's own limit on what it will honour, so a client asking for 64000
 // gets 1024 rather than a bill.
@@ -219,15 +262,18 @@ function roll(now) {
 // ------------------------------------------------------------ validation
 
 // THE ONE SHAPE, checked field by field. Anything the engine does not send
-// is refused rather than forwarded — no tools, no streaming, no system
-// arrays, no extra sampling parameters. Adding a capability to the margin
-// means adding it HERE too, deliberately, which is the point.
+// is refused rather than forwarded — no streaming, no extra sampling
+// parameters. Adding a capability to the margin means adding it HERE too,
+// deliberately, which is the point — and it has now happened twice: system
+// BLOCKS when the prompt gained a cache breakpoint (2026-08-03), and TOOLS
+// when the margin learned to search (2026-08-10). Both arrived as named
+// fields with their own checks, neither as a widening.
 const MAX_BODY = 256 * 1024; // a page's worth of prose, generously
 const MAX_MESSAGES = 8;
 
 function validate(body) {
   if (typeof body !== 'object' || body === null) return 'not an object';
-  const { system, messages, output_config: oc } = body;
+  const { system, messages, output_config: oc, tools } = body;
   // SYSTEM MAY BE A STRING OR CACHEABLE BLOCKS (2026-08-03). The engine
   // now sends the second form so its 1,076-token prompt can carry a
   // cache_control breakpoint — see the note above cached() in engine.ts.
@@ -277,6 +323,35 @@ function validate(body) {
   // Still checked rather than waved through: only `format`, only
   // json_schema, and a bounded schema — a request may not smuggle an
   // arbitrary payload through this field.
+  // TOOLS, CHECKED SHAPE BY SHAPE (2026-08-10). Exactly two are
+  // admissible and nothing else gets through: the search tool — whose
+  // `type` this box overrides anyway, so it is checked only for being
+  // the right KIND of thing — and the client's answer tool, whose schema
+  // is the client's to specify for the same reason output_config's was
+  // (it is the shape the margin will parse) while the wrapper stays ours.
+  if (tools !== undefined) {
+    if (!Array.isArray(tools)) return 'tools must be an array';
+    if (tools.length > 2) return 'too many tools';
+    let searches = 0;
+    let answers = 0;
+    for (const t of tools) {
+      if (typeof t !== 'object' || t === null) return 'bad tool';
+      if (t.name === 'web_search') {
+        if (typeof t.type !== 'string' || !t.type.startsWith('web_search_'))
+          return 'bad search tool';
+        searches += 1;
+      } else if (typeof t.name === 'string' && t.input_schema) {
+        if (typeof t.input_schema !== 'object') return 'bad tool schema';
+        if (JSON.stringify(t.input_schema).length > 8000) return 'tool schema too large';
+        if (typeof t.description !== 'string' || t.description.length > 2000)
+          return 'bad tool description';
+        answers += 1;
+      } else {
+        return 'unknown tool';
+      }
+    }
+    if (searches > 1 || answers > 1) return 'one tool of each kind';
+  }
   if (oc !== undefined) {
     if (typeof oc !== 'object' || oc === null) return 'output_config must be an object';
     if (Object.keys(oc).some((k) => k !== 'format')) return 'output_config: format only';
@@ -381,7 +456,25 @@ const server = createServer(async (req, res) => {
   state.calls[user] = used + 1;
 
   try {
-    const answer = await client.messages.create({
+    // Rebuilt on the house's terms, like the model and the ceiling: the
+    // client's search tool keeps its NAME (the prompt refers to it) and
+    // loses its version and its budget, both of which are ours. Its
+    // answer tool passes with its schema intact, since that schema is
+    // the contract the margin will parse on the other side.
+    const outgoingTools = Array.isArray(body.tools)
+      ? body.tools.map((t) =>
+          t.name === 'web_search'
+            ? { type: SEARCH_TOOL, name: 'web_search', max_uses: MAX_SEARCHES }
+            : {
+                name: t.name,
+                description: t.description,
+                ...(t.strict === true ? { strict: true } : {}),
+                input_schema: t.input_schema,
+              }
+        )
+      : undefined;
+
+    const request = {
       model: MODEL,
       max_tokens: maxTokens,
       // Rebuilt, not forwarded: a string passes as-is, and blocks are
@@ -413,7 +506,35 @@ const server = createServer(async (req, res) => {
             },
           }
         : {}),
-    });
+      ...(outgoingTools ? { tools: outgoingTools } : {}),
+    };
+
+    // THE PAUSE LOOP IS THE HOUSE'S (see MAX_PAUSES). A search turn that
+    // hits the server-side iteration ceiling comes back unfinished with
+    // stop_reason 'pause_turn' and must be asked again with its own
+    // partial turn appended — no extra user message, or the model reads
+    // it as a new instruction. Reading a pause as an answer would
+    // truncate the reply silently, which on this path means a note whose
+    // sources are real and whose sentence stops halfway.
+    //
+    // EVERY LEG IS BILLED, so every leg is counted: the totals below
+    // accumulate across the resumptions rather than reading the last
+    // response, which would under-count a long search by however many
+    // legs it took.
+    let answer;
+    const messagesOut = request.messages;
+    const totals = { fresh: 0, cacheRead: 0, cacheWrite: 0, out: 0, searches: 0 };
+    for (let leg = 0; ; leg += 1) {
+      answer = await client.messages.create({ ...request, messages: messagesOut });
+      const lu = answer.usage ?? {};
+      totals.fresh += lu.input_tokens ?? 0;
+      totals.cacheRead += lu.cache_read_input_tokens ?? 0;
+      totals.cacheWrite += lu.cache_creation_input_tokens ?? 0;
+      totals.out += lu.output_tokens ?? 0;
+      totals.searches += lu.server_tool_use?.web_search_requests ?? 0;
+      if (answer.stop_reason !== 'pause_turn' || leg >= MAX_PAUSES) break;
+      messagesOut.push({ role: 'assistant', content: answer.content });
+    }
 
     // The bill, estimated from what actually came back — and CACHED INPUT
     // IS NOT PRICED LIKE FRESH INPUT (2026-08-03, when the engine's system
@@ -423,18 +544,22 @@ const server = createServer(async (req, res) => {
     // them at full rate would have made the ceiling close the door on
     // roughly twice the spend that had actually happened.
     const rate = rateFor(MODEL);
-    const u = answer.usage ?? {};
-    const fresh = u.input_tokens ?? 0;
-    const cacheRead = u.cache_read_input_tokens ?? 0;
+    const u = totals;
+    const fresh = u.fresh;
+    const cacheRead = u.cacheRead;
     // 1.25× is the 5-minute TTL's write premium, which is what engine.ts
     // sends. A 1-hour TTL would be 2× and this would under-count — change
     // both together if that TTL is ever adopted.
-    const cacheWrite = u.cache_creation_input_tokens ?? 0;
+    const cacheWrite = u.cacheWrite;
     const usd =
       (fresh / 1e6) * rate.in +
       (cacheRead / 1e6) * rate.in * 0.1 +
       (cacheWrite / 1e6) * rate.in * 1.25 +
-      ((u.output_tokens ?? 0) / 1e6) * rate.out;
+      (u.out / 1e6) * rate.out +
+      // The search fee, per use and independent of the tokens it drags
+      // in. On Haiku it is comfortably the larger half of a grounded
+      // answer's cost.
+      u.searches * SEARCH_USD;
     state.usd += usd;
     void saveState();
 
@@ -450,7 +575,7 @@ const server = createServer(async (req, res) => {
     // line rather than behind a flag.
     console.log(
       `[phloem-proxy] ${user} ok in=${fresh} cr=${cacheRead} cw=${cacheWrite} ` +
-        `out=${u.output_tokens ?? 0} $${usd.toFixed(5)} ` +
+        `out=${u.out} search=${u.searches} $${usd.toFixed(5)} ` +
         `month=$${state.usd.toFixed(2)}/${MONTHLY_USD}`
     );
 
