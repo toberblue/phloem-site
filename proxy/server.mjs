@@ -125,17 +125,25 @@ const MODEL = process.env.PHLOEM_ENGINE_MODEL ?? 'claude-opus-4-8';
 // out of date, so the capability arrives HERE, deliberately, which is
 // exactly what that rule is for.
 //
-// THE PAGE DOES NOT NAME THE SEARCH TOOL, for the same reason it does not
-// name the model — and here the two are the same fact. The tool has two
-// versions and each runs on a different family: the dynamic-filtering one
-// on Opus and Sonnet, the basic one on Haiku. A mismatch is a 400, not a
-// degradation. Since the MODEL is pinned in this file, the version that
-// matches it can only be decided in this file; a page allowed to choose
-// would be a page able to silence every margin on the box by choosing
-// wrong, without ever naming a model.
-const SEARCH_TOOL = MODEL.startsWith('claude-haiku')
-  ? 'web_search_20250305'
-  : 'web_search_20260209';
+// THE PAGE DOES NOT NAME THE SEARCH TOOL, and the reason changed on
+// 2026-08-10 without the rule changing. It used to be model-matching:
+// the tool had two versions gated to different model families, so a page
+// that chose wrong could silence every margin on this box. The gardener
+// then ruled for the older tool — measured cheaper, the only one that
+// returns citations, and it runs on EVERY model — so that particular
+// hazard is gone.
+//
+// It stays pinned here anyway, for the reason that outlives the hazard:
+// this box is the one thing that knows what it is currently talking to,
+// and an old page in somebody's browser should not be able to hold this
+// house to a tool version it has moved past. Same rule as the model, and
+// the same reason.
+//
+// WHEN THIS VERSION IS WITHDRAWN — and it is dated, so one day it will
+// be — every grounded summons on this box stops at once with a 400. That
+// is the loud failure and it is the good case; engine.ts carries the
+// matching note in the page. Change it in both places.
+const SEARCH_TOOL = 'web_search_20250305';
 
 // The house's own ceiling on how many searches one answer may run — the
 // client asks, this decides, exactly like max_tokens. A search is priced
