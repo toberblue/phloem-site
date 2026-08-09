@@ -141,7 +141,10 @@ const SEARCH_TOOL = MODEL.startsWith('claude-haiku')
 // client asks, this decides, exactly like max_tokens. A search is priced
 // per use on top of the tokens it drags into context, so this is the
 // dearest dial on the box and the one most worth being ours.
-const MAX_SEARCHES = Number(process.env.PHLOEM_MAX_SEARCHES ?? 4);
+// TWO, the gardener's number (2026-08-10): enough for the follow-up query
+// that pins down what the first search missed, not enough to wander. The
+// page sends its own and this replaces it, like every other budget here.
+const MAX_SEARCHES = Number(process.env.PHLOEM_MAX_SEARCHES ?? 2);
 
 // $10 per 1,000 searches, added to the month's estimate alongside the
 // tokens. Left out, the ceiling would under-count every grounded answer
