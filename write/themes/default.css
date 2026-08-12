@@ -1,0 +1,265 @@
+/* ===========================================================================
+   PHLOEM — THE DEFAULT PALETTE
+   ---------------------------------------------------------------------------
+   This file is the whole of Phloem's colour. Every surface in the app — the
+   page, the desk, the margin, the report, and the exported record a teacher
+   receives — is painted from the tokens below. Nothing else in the codebase
+   names a colour, with ONE deliberate exception (see THE ALARM, at the foot).
+
+   TO MAKE A NEW LOOK: copy this file to another name in the same folder
+   (app/public/themes/), change the values, and pick it from the workbench's
+   'the look' register. The selector lists whatever is in the folder. Nothing
+   else needs touching — no rebuild in `npm run dev`, and the exported report
+   follows automatically, because the export bakes this file's tokens into the
+   travelling HTML rather than keeping a second copy of them.
+
+   TWO PALETTES, ALWAYS. Each token is declared twice: once for a light
+   screen, once inside the `prefers-color-scheme: dark` block. A token defined
+   in only one of them keeps the other scheme's value, which is nearly always
+   wrong. When you add a token, add it to both.
+
+   WHAT THE TOKENS DIVIDE INTO, and it matters:
+
+     §1–§4  DRESS.    Free. These say nothing; they only look like something.
+     §5     MEANING.  The accent is the app's indexical language. Changing it
+                      recolours the report's provenance marks. Read §5 before
+                      you touch it.
+
+   =========================================================================== */
+
+:root {
+  /* -------------------------------------------------------------------------
+     §1  THE PAPER AND THE DESK
+     The page is a sheet of A4 lying on a desk. --paper is the sheet; --desk
+     is everything around it. The single biggest lever on how the app feels:
+     a warm paper and a darker desk read as a study, a white paper on a pale
+     grey desk reads as an office.
+     ------------------------------------------------------------------------- */
+
+  --paper: #ffffff;
+  --desk: #eceff1;
+
+  /* The sheet's drop shadow — how far the paper floats above the desk. A
+     complete box-shadow value, not a colour, so the blur and offset are
+     yours too. Softer and wider reads as more air. */
+  --shadow: 0 2px 14px rgba(0, 0, 0, 0.1);
+
+  /* The page's own width, shared so the margin-dwellers (ghosts, the whence
+     door, the shade) can hug the paper's edges instead of the far viewport
+     edge. Geometry rather than colour, but it belongs to the look. */
+  --page-w: min(794px, 94vw);
+
+  /* THE DESK LAMP. Hold Option and the margins glow warm, as though someone
+     switched on a lamp with the bulb set to warm. Two radial pools, left and
+     right; --lamp-near is the inner intensity, --lamp-far the outer. The
+     paper sits above them and keeps its daylight. Turn the alpha up for a
+     warmer, more theatrical reveal; set both to `transparent` to switch the
+     lamp off entirely. */
+  --lamp-near: rgba(255, 176, 92, 0.16);
+  --lamp-far: rgba(255, 176, 92, 0.13);
+
+  /* -------------------------------------------------------------------------
+     §2  THE INK
+     Four weights of text, from the writing itself down to the faintest
+     furniture. The gap between --ink-text and --hint is the single thing
+     most responsible for whether the app reads as crisp or as washed out.
+     ------------------------------------------------------------------------- */
+
+  /* The writing. Body text on the page, and the report's prose. */
+  --ink-text: #1f2428;
+
+  /* Drawn strokes (the retired draw mode's logged ink still renders). */
+  --ink-stroke: #2c3e50;
+
+  /* FURNITURE TEXT: the colophon, the chips, the quiet labels that are not
+     the writer's words. Deliberately faint — this is the app getting out of
+     the way.
+
+     A NOTE ON CONTRAST, because the arithmetic is easy to get wrong here:
+     this is an alpha, so what lands on screen is the blend. 0.22 black over
+     white paper renders about #c7c7c7, which is roughly 1.9:1 against the
+     paper. Readable body text wants 4.5:1 and ordinary UI text 3:1, so this
+     value is well below both — deliberate for a colophon nobody needs to
+     read, and worth raising if you find yourself squinting at the report.
+     Around 0.55 reaches 4.5:1. */
+  --hint: rgba(0, 0, 0, 0.22);
+
+  /* MUTED TEXT: a step firmer than --hint. The report's captions and its
+     evidence lines — text that is genuinely meant to be read, but is not
+     the writer's own words. Kept distinct from --hint on purpose: the
+     report is a document, not furniture. */
+  --muted: rgba(0, 0, 0, 0.42);
+
+  /* The faintest legible text there is — timestamps, counts, the small
+     print inside a card. */
+  --ink-faint: rgba(0, 0, 0, 0.40);
+
+  /* -------------------------------------------------------------------------
+     §3  EDGES
+     Hairlines: card borders, panel edges, the rules between rows. Three
+     rungs, softest to firmest. Grey rather than black, so the same value
+     works over both a white page and a dark desk — a black hairline
+     disappears in dark mode, which is the bug these tokens replaced.
+     ------------------------------------------------------------------------- */
+
+  --line-soft: rgba(128, 128, 128, 0.18); /* row rules inside a panel */
+  --line: rgba(128, 128, 128, 0.28); /* the ordinary card or panel edge */
+  --line-firm: rgba(128, 128, 128, 0.40); /* an edge that should be seen */
+
+  /* -------------------------------------------------------------------------
+     §4  SURFACES
+     Fills laid over the paper or the desk: hover states, pressed states,
+     the report's banded rows. All neutral greys — see §5 for why none of
+     these may carry meaning.
+     ------------------------------------------------------------------------- */
+
+  --fill: rgba(128, 128, 128, 0.08); /* a row under the pointer */
+  --fill-firm: rgba(128, 128, 128, 0.12); /* pressed, or held open */
+  --fill-strong: rgba(128, 128, 128, 0.2); /* dividers; a drop target */
+
+  /* The scrim behind a full-screen panel (the compare view), dimming the
+     desk so the panel reads as being in front of it. */
+  --scrim: rgba(0, 0, 0, 0.32);
+
+  /* THE REPORT'S LEDGER PANEL. A raised surface holding both analysis
+     grids, with alternating rows banded so the eye can travel a lane from
+     a label to its figure.
+
+     THE BANDING RANKS NOTHING. It is legibility and nothing else: ONE tint,
+     the same for every row, in the order the rows already stand. Giving the
+     bands different colours would turn a record into a scorecard, which is
+     the one thing the report may never become. If you brighten the stripe,
+     brighten it uniformly.
+
+     Raised 2026-08-12 (the report legibility pass): the stripe stood at
+     3.8% ink, invisible on most screens, so the lane the banding exists
+     to provide was not there. 7% reads as a lane without the rows
+     looking ruled. */
+  --rep-panel: rgba(255, 255, 255, 0.55);
+  --rep-stripe: rgba(31, 36, 40, 0.07);
+
+  /* -------------------------------------------------------------------------
+     §5  THE ACCENT — AND WHAT IT MEANS
+     ---------------------------------------------------------------------------
+     READ THIS BEFORE CHANGING --accent.
+
+     The accent is not decoration. It is Phloem's indexical language: green
+     means THE ENGINE WAS INVOLVED HERE, everywhere it appears. One colour,
+     one meaning, learned once and recognised on every surface:
+
+       · the claimed highlight on words taken from the margin
+       · the dashed left-rule on a paragraph the report reads as derived
+       · the key swatches that teach those two marks by resemblance
+       · a summoned ghost's ring; the margin's own voice
+
+     The report's marks are derived from this token by color-mix(), so they
+     all move together and stay consistent when you change it. That is the
+     point, and it is also the danger.
+
+     TWO THINGS A THEME MAY NOT DO, because they change what the record
+     SAYS rather than how it looks:
+
+     (a) DO NOT MAKE THE ACCENT READ AS A VERDICT. Red, amber, or anything
+         from the warning family turns 'this sentence came from the margin'
+         into 'this sentence is suspect'. The report answers "how did this
+         come to be?", never "how suspicious is this?" — a colour is quite
+         capable of asserting the second while the words say the first, and
+         a reader believes the colour.
+
+     (b) DO NOT GIVE THE WRITER'S-OWN-HAND MARKS AN ACCENT COLOUR. The
+         pasted and unkeyed underlines, and the dotted rail on a change of
+         tempo, are drawn in plain --ink-text on purpose: they are facts
+         about the writer's own hand, and painting them green would file
+         them under engine involvement. They are mixed from --ink-text and
+         will follow it; leave them there.
+
+     Any hue that is plainly not an alarm is fine — this green, a blue, a
+     violet, an ink-blue. Keep the two schemes' versions at similar
+     lightness against their own backgrounds, or the marks will shout in
+     one scheme and vanish in the other.
+     ------------------------------------------------------------------------- */
+
+  --accent: #2f6f4e;
+
+  /* A wash of the accent, for a control that is switched ON. Mixed from
+     --accent rather than stated, so it follows the accent automatically. */
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+
+  /* The pointing finger: the transient glow when the app carries you to a
+     word — a search hit, a slip's word-click, an arriving file. Brighter
+     than --accent-soft because it is momentary and must be caught by the
+     eye. Also mixed from --accent, so it follows. */
+  --accent-glow: color-mix(in srgb, var(--accent) 45%, transparent);
+
+  /* Selected text wears the app's own green rather than the OS blue
+     (Charlotte, 2026-07-18). Translucent, so the ink stays readable
+     underneath it. */
+  --selection: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* ===========================================================================
+   THE DARK SCHEME
+   Every token above, restated. The relationships are what carry over, not
+   the values: paper lighter than desk, ink well clear of both, the accent
+   at a similar apparent strength against a dark ground (which nearly always
+   means a LIGHTER, less saturated version of the same hue — a dark green on
+   a dark desk is invisible).
+   =========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* §1 paper and desk */
+    --paper: #23272a;
+    --desk: #16181a;
+    --shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+    /* --page-w is scheme-independent and is not restated. */
+    --lamp-near: rgba(255, 156, 64, 0.12);
+    --lamp-far: rgba(255, 156, 64, 0.10);
+
+    /* §2 ink — the alphas flip to white over a dark ground */
+    --ink-text: #e8e6e3;
+    --ink-stroke: #cfd8dc;
+    --hint: rgba(255, 255, 255, 0.2);
+    --muted: rgba(255, 255, 255, 0.44);
+    --ink-faint: rgba(255, 255, 255, 0.38);
+
+    /* §3 edges — grey works in both schemes, so these are unchanged from
+       the light values on purpose. Restated anyway, so that a theme author
+       editing this block sees the whole palette in one place. */
+    --line-soft: rgba(128, 128, 128, 0.18);
+    --line: rgba(128, 128, 128, 0.28);
+    --line-firm: rgba(128, 128, 128, 0.40);
+
+    /* §4 surfaces */
+    --fill: rgba(128, 128, 128, 0.08);
+    --fill-firm: rgba(128, 128, 128, 0.12);
+    --fill-strong: rgba(128, 128, 128, 0.2);
+    --scrim: rgba(0, 0, 0, 0.45);
+    /* The panel lifts by going LIGHTER over a dark desk, as it does over a
+       light one — the same instruction, opposite arithmetic. */
+    --rep-panel: rgba(255, 255, 255, 0.045);
+    --rep-stripe: rgba(255, 255, 255, 0.065);
+
+    /* §5 the accent — the same meaning, lightened to hold against the desk */
+    --accent: #6cc295;
+    /* --accent-soft, --accent-glow and --selection are mixed from --accent
+       and follow it without being restated. */
+  }
+}
+
+/* ===========================================================================
+   THE ALARM — THE ONE COLOUR THAT IS NOT IN THIS FILE
+   ---------------------------------------------------------------------------
+   #b23c31, the red worn by a broken seal and by the burn confirmation, is
+   hardcoded in style.css and in the exported report, and is deliberately NOT
+   themeable.
+
+   A report that cannot vouch for its own log says so before anything else is
+   believed. If that verdict could be repainted, a theme could hide a tamper
+   finding — quietly, and in a file that looks like decoration. The same goes
+   for the one gesture in this app that destroys anything: the burn asks for a
+   name typed back, and it asks in red.
+
+   It is the app's only alarm colour, it means exactly one thing, and it is
+   not available for dressing. (Ruled by the gardener, 2026-08-12.)
+   =========================================================================== */

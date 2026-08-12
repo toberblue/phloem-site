@@ -4,9 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/write/favicon.svg" />
+    <!-- THE PALETTE (2026-08-12). Every colour in Phloem is a token declared
+         in this file; style.css carries structure and reads them through
+         var(). It is linked here rather than imported by main.ts for two
+         reasons: a <link> in <head> is render-blocking, so the page never
+         flashes an unpainted frame, and a file under public/ is served
+         verbatim, which is what lets the workbench swap it for a sibling at
+         runtime without a rebuild. An ordinary build loads this one file and
+         nothing else — the swapping lives behind the workbench's flag. -->
+    <link rel="stylesheet" id="phloem-palette" href="/write/themes/default.css" />
     <title>Phloem</title>
-    <script type="module" crossorigin src="/write/assets/index-CERUwAsV.js"></script>
-    <link rel="stylesheet" crossorigin href="/write/assets/index-27htpNHq.css">
+    <script type="module" crossorigin src="/write/assets/index-RCoMSR5N.js"></script>
+    <link rel="stylesheet" crossorigin href="/write/assets/index-B8SpHAjn.css">
   </head>
   <body>
     <div id="app"></div>

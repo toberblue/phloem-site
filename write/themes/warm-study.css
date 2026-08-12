@@ -1,0 +1,103 @@
+/* ===========================================================================
+   WARM STUDY — a worked example
+   ---------------------------------------------------------------------------
+   Built 2026-08-12 as the first sibling of default.css: something to select,
+   so the mechanism can be seen doing something, and a demonstration of what
+   the comments in default.css are actually asking you to decide.
+
+   It is NOT a proposal. It is one set of answers, and every value in it is
+   there to be argued with.
+
+   WHAT IT CHANGES, and why each:
+
+   1. THE DESK GOES WARM AND DARKER, the paper stays near-white. The default
+      is a white sheet on a pale grey desk, which reads as an office; a
+      warmer, darker desk makes the paper look like paper and gives the
+      margin's ghosts something to stand against. This is the single change
+      most responsible for the app no longer reading as "all rather grey".
+
+   2. THE FAINT TEXT GETS READABLE. --hint at 0.22 renders about 1.9:1
+      against white, well under the 4.5:1 readable text wants; it is raised
+      to 0.5, and --muted — the report's captions and evidence lines, which
+      are meant to be READ — to 0.62. This is the half of "the reports are
+      hard to read" that is arithmetic rather than taste.
+
+   3. THE LEDGER STRIPE BECOMES VISIBLE. 3.8% ink is invisible on most
+      screens, so the lane from a label to its figure — the whole reason the
+      banding exists — was not there. Raised to 6.5%, which reads as a lane
+      without the rows looking ruled.
+
+   4. THE ACCENT DEEPENS but does not move hue. Still unmistakably the same
+      green, so nothing in the indexical language changes meaning; just
+      enough more saturated to hold against a warmer desk.
+
+   5. THE LAMP BURNS A LITTLE BRIGHTER, because on a warm desk it can.
+   =========================================================================== */
+
+:root {
+  /* §1 paper and desk */
+  --paper: #fdfcfa;
+  --desk: #ded5c8;
+  --shadow: 0 3px 20px rgba(60, 45, 30, 0.16);
+  --page-w: min(794px, 94vw);
+  --lamp-near: rgba(255, 176, 92, 0.26);
+  --lamp-far: rgba(255, 176, 92, 0.2);
+
+  /* §2 ink */
+  --ink-text: #23201c;
+  --ink-stroke: #3a3a44;
+  --hint: rgba(0, 0, 0, 0.5);
+  --muted: rgba(0, 0, 0, 0.62);
+  --ink-faint: rgba(0, 0, 0, 0.45);
+
+  /* §3 edges */
+  --line-soft: rgba(90, 75, 55, 0.2);
+  --line: rgba(90, 75, 55, 0.32);
+  --line-firm: rgba(90, 75, 55, 0.46);
+
+  /* §4 surfaces */
+  --fill: rgba(90, 75, 55, 0.08);
+  --fill-firm: rgba(90, 75, 55, 0.14);
+  --fill-strong: rgba(90, 75, 55, 0.22);
+  --scrim: rgba(35, 28, 20, 0.4);
+  --rep-panel: rgba(255, 253, 250, 0.72);
+  --rep-stripe: rgba(60, 45, 30, 0.065);
+
+  /* §5 the accent — the same green, the same meaning, a shade deeper */
+  --accent: #24614a;
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-glow: color-mix(in srgb, var(--accent) 45%, transparent);
+  --selection: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* The dark scheme keeps the same warmth, read the other way up: a brown-
+   black desk rather than a blue-black one, and paper that is a warm dark
+   grey rather than a cold one. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #26231f;
+    --desk: #17140f;
+    --shadow: 0 3px 20px rgba(0, 0, 0, 0.55);
+    --lamp-near: rgba(255, 168, 82, 0.18);
+    --lamp-far: rgba(255, 168, 82, 0.14);
+
+    --ink-text: #ece7df;
+    --ink-stroke: #d4cfc6;
+    --hint: rgba(255, 255, 255, 0.44);
+    --muted: rgba(255, 255, 255, 0.62);
+    --ink-faint: rgba(255, 255, 255, 0.42);
+
+    --line-soft: rgba(190, 175, 150, 0.16);
+    --line: rgba(190, 175, 150, 0.26);
+    --line-firm: rgba(190, 175, 150, 0.38);
+
+    --fill: rgba(230, 215, 190, 0.06);
+    --fill-firm: rgba(230, 215, 190, 0.1);
+    --fill-strong: rgba(230, 215, 190, 0.16);
+    --scrim: rgba(0, 0, 0, 0.55);
+    --rep-panel: rgba(255, 245, 230, 0.05);
+    --rep-stripe: rgba(255, 245, 230, 0.055);
+
+    --accent: #7ecb9e;
+  }
+}
