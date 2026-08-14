@@ -363,6 +363,23 @@ function validate(body) {
     }
     if (searches > 1 || answers > 1) return 'one tool of each kind';
   }
+  // TOOL_CHOICE, NARROWLY (2026-08-14, the quoted shape's declare turn —
+  // see engine.ts groundedAsk). The engine may FORCE a named tool for
+  // the one-boolean declaration that follows a quoted answer: a
+  // declaration asked for nicely in prose is the corrects-as-text leak
+  // that already happened once. Only the fields the API needs pass;
+  // everything else a client might hang on this object is refused.
+  if (body.tool_choice !== undefined) {
+    const tc = body.tool_choice;
+    if (typeof tc !== 'object' || tc === null) return 'bad tool_choice';
+    if (tc.type !== 'auto' && tc.type !== 'any' && tc.type !== 'tool')
+      return 'tool_choice type must be auto, any or tool';
+    if (
+      tc.type === 'tool' &&
+      (typeof tc.name !== 'string' || !tc.name || tc.name.length > 64)
+    )
+      return 'tool_choice tool needs a name';
+  }
   if (oc !== undefined) {
     if (typeof oc !== 'object' || oc === null) return 'output_config must be an object';
     if (Object.keys(oc).some((k) => k !== 'format')) return 'output_config: format only';
@@ -518,6 +535,18 @@ const server = createServer(async (req, res) => {
           }
         : {}),
       ...(outgoingTools ? { tools: outgoingTools } : {}),
+      // Rebuilt field by field like everything else: type, and the name
+      // only where the type wants one (the declare turn's forced tool).
+      ...(body.tool_choice
+        ? {
+            tool_choice: {
+              type: body.tool_choice.type,
+              ...(body.tool_choice.type === 'tool'
+                ? { name: body.tool_choice.name }
+                : {}),
+            },
+          }
+        : {}),
     };
 
     // THE PAUSE LOOP IS THE HOUSE'S (see MAX_PAUSES). A search turn that
