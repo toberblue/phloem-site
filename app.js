@@ -127,7 +127,7 @@ function handleContact(req, res) {
     const name = (form.get('name') || '').slice(0, 200).trim();
     const email = (form.get('email') || '').slice(0, 200).trim();
     const message = (form.get('message') || '').slice(0, 5000).trim();
-    const platforms = form.getAll('platform').filter(p => ['macOS', 'Windows', 'Linux'].includes(p));
+    const platforms = form.getAll('platform').filter(p => ['Browser', 'macOS', 'Windows', 'Linux'].includes(p));
     // Time-trap: the page stamps ms-since-load at submit. No stamp means no
     // script ran (HTML-parsing bot); under 6s means nobody read anything.
     // Suspect mail is tagged, never dropped — a human is never locked out.
