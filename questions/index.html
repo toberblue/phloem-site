@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phloem — questions, honestly answered</title>
+<meta name="description" content="The questions teachers, school leaders and privacy officers actually ask about Phloem — answered with dated sources, and with what we don't know marked as such.">
+<link rel="icon" type="image/svg+xml" href="/phloem-mark.svg">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+<header class="page-head">
+  <a class="crumb" href="/"><img src="/phloem-mark.svg" alt="" width="28" height="28"> Phloem</a>
+  <h1>Questions, honestly answered</h1>
+  <p class="tagline">These are the questions teachers, school leaders and privacy officers actually ask. Every claim carries a date, because a claim with no date can't be checked — and where we don't know something, it says so.</p>
+</header>
+
+<main>
+
+<section id="record">
+  <h2>What the record is — and isn't</h2>
+
+  <div class="qa">
+    <h3>Does Phloem mark or grade student work?</h3>
+    <p>No — and it never will. Phloem doesn't score writing, grade it, or judge its quality. The report describes how a document came to be: which sentences were typed, which were pasted in, which came from an AI suggestion taken whole — and which came from a suggestion the writer read, thought about, and rewrote in her own words. What a teacher makes of that description is the teacher's call, made with everything they already know about the student.</p>
+    <p>The Ministry of Education's guidance on AI and marking puts its first principle this way: "AI must support — not replace — teachers' professional judgements." That principle is Phloem's design premise, not a constraint it works around. The report gives a teacher more to exercise judgement <em>on</em>, and takes none of it away.</p>
+    <p class="cite">Marking work with AI tools, Ministry of Education / Te Poutāhū Curriculum Centre, October 2025 (education.govt.nz).</p>
+  </div>
+
+  <div class="qa">
+    <h3>Is this an AI detector? Why not just use one?</h3>
+    <p>No. A detector reads a finished text and guesses where it came from. Phloem doesn't guess, because it doesn't need to: the record was kept while the writing happened, event by event, in a sealed log the writer owns.</p>
+    <p>The guessing turns out to matter. In a study by Perkins and colleagues (samples tested September–October 2023, published March 2024), seven major detectors — Turnitin, GPTZero and Copyleaks among them — averaged 39.5% accuracy on unmodified AI-generated text. When the text was lightly disguised, by asking the model to add spelling errors or vary its sentence lengths, accuracy fell to 22%. The errors ran in both directions: human-written control samples were correctly identified only 67% of the time, and 15% of all results falsely accused a human writer. The authors' conclusion was that these tools "cannot currently be recommended for determining whether violations of academic integrity have occurred." They are careful to say the results are a snapshot and the tools keep evolving — so are we, and the date above is there so you can weigh it.</p>
+    <p>Those false accusations don't land evenly. Research the study builds on found detectors misread the writing of non-native English speakers as AI-generated more than half the time — a finding some detector vendors dispute, which is exactly the kind of argument a student can't win from inside it. The honest writer accused by a percentage score has no way to answer. A writer with a Phloem record does: she hands it over, sealed, and says — here's how it came to be.</p>
+    <p>None of this replaces your plagiarism checker. It runs over the finished text exactly as it did yesterday; Phloem neither replaces it nor obstructs it.</p>
+    <p class="cite">Perkins, Roe et al., <a href="https://arxiv.org/abs/2403.19148">GenAI Detection Tools, Adversarial Techniques and Implications for Inclusivity in Higher Education</a> (preprint, March 2024) · Liang et al., <a href="https://arxiv.org/abs/2304.02819">GPT detectors are biased against non-native English writers</a> (2023; contested by Turnitin and GPTZero in their own published research).</p>
+  </div>
+
+  <div class="qa">
+    <h3>Isn't this just surveillance with better manners?</h3>
+    <p>Opposite polarity. Surveillance takes evidence from the student; this is evidence she offers. The record is hers — it lives with her, exports when she chooses, and is shared by her consent. She keeps her own copy, which is more than she holds today under any monitoring tool.</p>
+    <p>The honest limit, stated plainly: the moment an assignment brief says "attach your Phloem report", consent starts to shade into compliance. We don't pretend otherwise. What survives that moment is still hers — her own copy of the record, and a description rather than a score.</p>
+  </div>
+
+  <div class="qa">
+    <h3>Couldn't a student pass copied work off as her own typing?</h3>
+    <p>Yes — by retyping it, and the report will not catch her. We'd rather tell you that than have you find it out. The report never uses the word "original", because it can't know: it records typed, pasted, offered-and-taken, offered-and-declined — facts about how the document came to be, never certificates of where a sentence was born. I found the limit myself, writing a test essay with Wikipedia open in the next window: my transcription went down as my own typing, because it <em>was</em> my own typing. No tool can see the second screen — including the keystroke-watchers whose scores imply they can. The difference is that we say so.</p>
+    <p>What the record does close off is the cheap version. A paste wears its own mark. AI help is on the ledger along with what she did about it. The deception that remains costs her hours of reading and retyping at human speed — which is, not coincidentally, the very time-on-task the assignment was asking for.</p>
+  </div>
+
+  <div class="qa">
+    <h3>But she could type it all herself and learn nothing.</h3>
+    <p>So could I, forty years ago — cram for three days, write the essay, lose ninety-five percent of it within the week. The finished paper has never proved learning; it only ever proved its own existence. What's changed is where the facts live: a date or a formula is seconds away, so education has moved to what it was always really about — how to think, how to learn, how to work with sources.</p>
+    <p>A truthful account of the process serves that. What the margin offered, what she took, what she declined, what she reworked in her own words. It isn't proof of learning — nothing is — but it is strictly more than the finished paper ever told you.</p>
+  </div>
+</section>
+
+<section id="law">
+  <h2>The writing, the law, and the machine</h2>
+
+  <div class="qa">
+    <h3>Is students' writing used to train the AI?</h3>
+    <p>No. The margin runs on Anthropic's Claude through their commercial API, and the Commercial Terms say it in one clause: "Anthropic may not train models on Customer Content from Services." We can put that clause in front of you.</p>
+    <p>The Ministry of Education's own guidance warns about precisely this: many AI tools reuse what's typed into them as training data, and putting student work into a tool that isn't information-protected "may be in breach of NZ Privacy Law" (October 2025). That warning is the right test to apply — to Phloem as much as to anything else. It is the test Phloem was built to pass: the terms forbid training on the writing, and the data-processing agreement that governs it is a document we can hand you, not a reassurance.</p>
+    <p class="cite"><a href="https://www.anthropic.com/legal/commercial-terms">Anthropic Commercial Terms of Service</a> §B and the <a href="https://www.anthropic.com/legal/data-processing-addendum">Data Processing Addendum</a> incorporated into them, as read August 2026 · Marking work with AI tools, Ministry of Education, October 2025.</p>
+  </div>
+
+  <div class="qa">
+    <h3>The writing goes to a model in the United States. Doesn't that need consent?</h3>
+    <p>You should know that fact before anyone asks it, so: yes, when the writer summons the margin, the relevant writing goes to Anthropic's servers in the United States, under the terms above.</p>
+    <p>In law, that is processing, not disclosure. Anthropic processes the information on the school's behalf, so under section 11 of the Privacy Act 2020 the school never stops holding it — which makes this a security question under IPP 5, not a cross-border disclosure under IPP 12. That isn't our reading alone: it's the Privacy Commissioner's published position on cloud services, and the distinction is worth more than any assurance we could give you ourselves.</p>
+    <p class="cite">Privacy Act 2020, s 11 · <a href="https://www.privacy.org.nz/responsibilities/disclosing-personal-information-outside-new-zealand/">OPC — Sending information overseas</a>: an agency using a cloud provider remains responsible for the information; holding under IPP 5, not disclosure under IPP 12.</p>
+  </div>
+
+  <div class="qa">
+    <h3>If something goes wrong, is that on you or on the school?</h3>
+    <p>On the school — and we're not dodging by saying so. Because the information never leaves the school's hands legally, the school carries the responsibility, including breach notification. Which is exactly why a school should hold its providers to a contract that makes that safe, rather than to a reassurance. We'd rather be held to the contract.</p>
+  </div>
+
+  <div class="qa">
+    <h3>Can a student get a copy of everything held about her?</h3>
+    <p>Yes — completely, and probably faster than anything else in a school's stack. The document <em>is</em> the record: it exports whole and sealed, and there is no stored profile of the writer beyond the document's own history. Access requests are the easiest question we get, because the design answers them by construction.</p>
+    <p class="cite">Privacy Act 2020, IPP 6.</p>
+  </div>
+
+  <div class="qa">
+    <h3>Can a student have her record deleted?</h3>
+    <p>If it has become part of a state school's records — not freely, and we'd be misleading you if we said yes. Records about students sit under the Public Records Act 2005; disposal runs through a disposal authority and needs the school board's permission. That's the school's constraint, not ours — but it's why we don't promise erasure, and why we make no retention claims of any kind. A promise never made can never quietly become false.</p>
+    <p>Her garden — the writing itself, and its history — is a different matter, because it was never the school's to begin with. That's the next question.</p>
+    <p class="cite">Public Records Act 2005 · Disposal authority DA 699, in the Ministry's School Records Retention and Disposal Schedule, as read August 2026.</p>
+  </div>
+
+  <div class="qa">
+    <h3>Whose record is the essay itself?</h3>
+    <p>The writer's — and the honest, longer answer is one of the most interesting questions Phloem touches, because the law has never had to rule on the writing <em>process</em> at all. Schools have only ever held what students hand in. A school-provisioned cloud writing tool would quietly change that; Phloem's attachment model deliberately doesn't. The full argument, with the sources, is on its own page: <a href="/records/">Whose record is the essay?</a></p>
+  </div>
+
+  <div class="qa">
+    <h3>What if a student writes about somebody else — a sibling, a teacher?</h3>
+    <p>That's IPP 3A, which came into force on 1 May 2026 — new law about collecting personal information indirectly. Our reading is that the exceptions carry most of the school writing case, but it is new law and our reading is marked as exactly that: a school's privacy officer should reach their own view rather than take ours.</p>
+    <p class="cite">Privacy Act 2020, IPP 3A, in force 1 May 2026.</p>
+  </div>
+</section>
+
+<section id="school">
+  <h2>Running it in a school</h2>
+
+  <div class="qa">
+    <h3>Do we have to install anything? Does IT need to approve it?</h3>
+    <p>No. The student writes, exports two files — the readable report and its sealed record — and attaches them to the assignment she already submits. Nothing installed, no tenant administration, no procurement, no new account for the school to govern. We tested the round trip end-to-end through a school's own OneDrive in July 2026.</p>
+  </div>
+
+  <div class="qa">
+    <h3>Are you a Ministry-approved vendor?</h3>
+    <p>No, and we're not asking to be. The Ministry holds cloud agreements with Microsoft and Google; Phloem isn't on that list, and that is precisely why the pilot attaches a file to an assignment you already run instead of asking the school to adopt a new cloud service holding student writing. The report travels inside the systems you've already approved.</p>
+  </div>
+
+  <div class="qa">
+    <h3>Has a lawyer reviewed any of this?</h3>
+    <p>No. Everything on this page is our own reading of published guidance and primary sources, written up with the gaps marked in the documents themselves. We'd rather hand you that than a confident answer nobody has checked. The two working documents behind these answers — the Privacy Act analysis and the school-as-agency analysis — exist, are dated, and mark what we don't know; if fifteen minutes with them would help your privacy officer, <a href="/#contact">write</a> and we'll send them.</p>
+  </div>
+
+  <div class="qa">
+    <h3>What's your data-breach process?</h3>
+    <p>Owed, not built — and we'd rather tell you that now than have you discover it later. Anthropic is contractually obliged to notify us of a breach; nothing yet obliges us to notify a school, and the school is the one carrying the 72-hour clock. A breach-notification agreement is a short document, and it's the first one we'd sign before a single student writes under a school's roof.</p>
+  </div>
+</section>
+
+<section id="gaps">
+  <h2>What we haven't done yet</h2>
+  <p>Marked deliberately, because an unmarked gap found later reads as concealment:</p>
+  <ul class="gaps">
+    <li><strong>No practitioner has reviewed the legal analysis.</strong> It is our own reading of published guidance, and it says so on its own front page.</li>
+    <li><strong>No breach process and no school agreement exist yet.</strong> Both are short documents, both owed before any student writes in a school pilot.</li>
+    <li><strong>The sources are dated, deliberately.</strong> Terms of service and government guidance change without announcing themselves; every claim above says when we read it, so it can be checked rather than trusted.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <p><a href="/">← Phloem</a> · <a href="/records/">Whose record is the essay?</a> · © 2026 · Witness — not police.</p>
+</footer>
+
+</body>
+</html>

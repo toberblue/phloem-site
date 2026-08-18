@@ -97,3 +97,18 @@ footer{
   max-width:var(--maxw); margin:0 auto; padding:1.5rem 1.25rem 2.5rem;
   border-top:1px solid var(--line); color:var(--muted); font-size:.9rem;
 }
+/* Inner pages (/questions/, /records/): a quieter head than the hero. */
+.page-head{max-width:var(--maxw); margin:0 auto; padding:2.5rem 1.25rem .5rem;}
+.page-head .crumb{display:inline-flex; align-items:center; gap:.5rem; font-weight:600; color:var(--muted);}
+.page-head .crumb:hover{color:var(--accent); text-decoration:none;}
+.page-head .crumb img{display:block;}
+.page-head h1{font-size:1.9rem; font-weight:600; letter-spacing:-.015em; margin:1.6rem 0 .5rem;}
+.page-head .tagline{font-size:1.05rem;}
+.qa{margin:0 0 2.2rem;}
+.qa h3{font-size:1.05rem;}
+.cite{
+  color:var(--muted); font-size:.85rem; line-height:1.5;
+  border-left:2px solid var(--line); padding-left:.75rem; margin-top:-.25rem;
+}
+ul.gaps{margin:0; padding-left:1.2rem;}
+ul.gaps li{margin:0 0 .7rem;}
