@@ -128,6 +128,14 @@ gone quiet and nothing else explains it.
 
 ## Deploying a change
 
+The one command is `node tools/update.mjs` from the phloem repo (`--online`
+for the pilot alone). Since 2026-08-19 it also handles the restart below:
+it reads the container's commit before and after the pull and restarts
+exactly the processes whose code moved (`nodejs` for app.js/door/,
+`phloem-proxy` for proxy/) — found the hard way when an app.js change
+deployed clean and the old server kept running. The manual steps, for the
+day the tool breaks:
+
 ```bash
 # 1. From the Mac
 git add -A && git commit -m "…" && git push origin main
