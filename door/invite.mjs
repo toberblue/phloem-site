@@ -18,7 +18,7 @@
 
 import { load, save, issue, revoke, list } from './store.mjs';
 
-const BASE = process.env.PHLOEM_BASE_URL ?? 'https://phloem.example.nz';
+const BASE = process.env.PHLOEM_BASE_URL ?? 'https://phloem.nz';
 const [cmd, arg] = process.argv.slice(2);
 
 // STORED IN UTC, SHOWN IN LOCAL — the third outing for a lesson the

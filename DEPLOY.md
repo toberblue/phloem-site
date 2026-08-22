@@ -1,4 +1,4 @@
-# Deploying henley.nz, and the Phloem pilot behind it
+# Deploying phloem.nz, and the Phloem pilot behind it
 
 Two things live on this box: the public site, and a private trial of Phloem
 at `/write/`. They are served by one Node process because the container's
@@ -147,8 +147,8 @@ ssh henley "cd /container/application && git pull && npm ci && npm run build && 
 ssh henley "supervisorctl -s unix:///container/system/run/supervisor.sock restart nodejs phloem-proxy"
 
 # 4. Verify from outside — never from inside (curl localhost:3000 reports 000 even when healthy)
-curl -sI https://henley.nz | head -3
-curl -sI https://henley.nz/write/ | head -3     # expect 401 without a cookie
+curl -sI https://phloem.nz | head -3
+curl -sI https://phloem.nz/write/ | head -3     # expect 401 without a cookie
 ```
 
 ## Deploying the Phloem app itself
@@ -178,7 +178,7 @@ Two things that build carries which an ordinary one must not:
 Run on the container, so the ledger lives beside the server that reads it:
 
 ```bash
-ssh henley "cd /container/application && PHLOEM_BASE_URL=https://henley.nz node door/invite.mjs issue 'jane@school.nz'"
+ssh henley "cd /container/application && PHLOEM_BASE_URL=https://phloem.nz node door/invite.mjs issue 'jane@school.nz'"
 ssh henley "cd /container/application && node door/invite.mjs list"
 ssh henley "cd /container/application && node door/invite.mjs revoke 'jane@school.nz'"
 ```
@@ -237,6 +237,6 @@ instruction that existed only because of it.**
 
 **TLS terminates at the host's edge**; this container sees plain HTTP. The
 session cookie is still `Secure`, and correctly so — that flag instructs the
-BROWSER, and the browser is on `https://henley.nz`. Nothing in this process
+BROWSER, and the browser is on `https://phloem.nz`. Nothing in this process
 needs to know it sits behind a terminator, and nothing here may start gating
 on `req.secure`.

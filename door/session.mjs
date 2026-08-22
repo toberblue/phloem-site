@@ -102,7 +102,7 @@ function cookieHeader(value) {
   // the page cannot lift the session. Secure: it may only ever travel over
   // TLS — and it still applies here, where TLS terminates at the HOST'S
   // EDGE and this container sees plain HTTP. The flag is an instruction to
-  // the BROWSER, and the browser is on https://henley.nz; nothing in this
+  // the BROWSER, and the browser is on https://phloem.nz; nothing in this
   // process needs to know it is behind a terminator. SameSite=Lax rather
   // than Strict BECAUSE the magic link is a top-level navigation arriving
   // from a mail client — Strict would refuse to send the cookie on exactly

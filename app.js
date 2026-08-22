@@ -148,7 +148,7 @@ function handleContact(req, res) {
 
     const mail = [
       `To: ${CONTACT_TO}`,
-      `From: Phloem site <noreply@henley.nz>`,
+      `From: Phloem site <noreply@phloem.nz>`,
       `Reply-To: ${headerSafe(name ? `${name} <${email}>` : email)}`,
       `Subject: ${headerSafe((suspect ? '[suspect] ' : '') + 'Phloem site contact' + (platforms.length ? ` — test on ${platforms.join(', ')}` : ''))}`,
       'Content-Type: text/plain; charset=utf-8',
