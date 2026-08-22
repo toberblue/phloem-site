@@ -126,6 +126,18 @@ though it is writable. If the container is ever re-provisioned these two
 stanzas go with it; they are the first thing to check when the margin has
 gone quiet and nothing else explains it.
 
+**WHICH HOSTNAMES WORK IS DECIDED IN THAT PANEL AND NOWHERE ELSE** (learned
+2026-08-22). This container's nginx has no `server_name` anywhere in it — the
+single `listen 80` block is a catch-all that will serve any Host it is
+handed. SiteHost's edge routes by name and passes through only the domains
+listed against the container; everything else gets SiteHost's own "Website
+Not Found" page. So a hostname answering 503 is never an nginx problem, and
+no amount of editing over ssh will touch it. The tell takes one command: if
+a bare IP and a nonsense Host header return the IDENTICAL 503, the request
+is not reaching this box at all. Add or remove domains in the panel, and the
+Let's Encrypt certificate follows about ten minutes later, apex and www
+together on one cert.
+
 ## Deploying a change
 
 The one command is `node tools/update.mjs` from the phloem repo (`--online`
@@ -189,6 +201,44 @@ restart, and no waiting.
 
 The link is printed once and never stored: the ledger keeps only its sha256.
 Lose the line and the only remedy is to issue another.
+
+## Changing the domain, which is a data migration
+
+**A GARDEN LIVES IN THE BROWSER, KEYED TO THE ORIGIN, SO RENAMING THE SITE
+ORPHANS EVERY ONE OF THEM** (learned 2026-08-22, moving henley.nz to
+phloem.nz — and learned *after* the old name had stopped answering, which is
+the hard way round). This box stores no documents at all: only the invite
+ledger and the proxy's meter. Documents are IndexedDB, one database per
+garden, and IndexedDB is scoped to the ORIGIN. `https://henley.nz` and
+`https://phloem.nz` are two different origins, so the new address opens a
+clean empty garden while forty leaves sit intact and unreachable a few
+directories away in the same Chrome profile.
+
+Nothing is lost, but the only way to read an origin's storage is to BE on
+that origin — so the recovery is to put the old domain back in the host
+panel, wait for its certificate, and carry the data across by hand. The
+order that avoids needing to:
+
+1. **Export every garden from the old origin first.** A
+   `.phloem-garden.json` carries events verbatim with their seals; a
+   `.phloem.json` leaf carries only the words, which for this app is the
+   half that matters least. Check the garden list before you start — the
+   export is the CURRENT garden only, and a second garden is easy to forget
+   you made.
+2. **Verify the files while the old name still answers.** `phloem: 1`, a
+   `garden` object, an `events` array, and the header's leaf and event
+   counts matching the arrays themselves. A truncated download looks fine
+   in Finder and fails at the far end.
+3. **Only then change the domain.** An import is a new planting with no
+   dedupe: each file becomes a NEW garden, and dropping one twice gives you
+   two of it.
+
+The door does not complicate any of this. A token is a rolling window rather
+than a one-shot (see store.mjs on why), and it is verified by this one
+process no matter which hostname carried it — so a single live invite opens
+BOTH origins for as long as the old one answers. Issuing a second key to get
+into the old site would only have revoked the first and locked you out of
+the new one mid-transfer.
 
 ## Why it looks like this
 
