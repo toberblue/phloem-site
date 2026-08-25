@@ -4,7 +4,9 @@ The other half of `invite.mjs`, which mints the link and deliberately does
 not send it — the flow is a personal email, written by hand, with the link
 pasted in. This file is the hand's template so each one doesn't have to be
 composed from scratch. First used for Charlotte and her friends,
-25 August 2026.
+25 August 2026 — and edited by Peter's hand before the first send, so
+this text is his, not a draft awaiting him. Sign-off as fits the
+recipient (Charlotte got "Dad x").
 
 To send one:
 
@@ -32,9 +34,9 @@ Here is your own personal link to Phloem:
 
 It's yours alone — no account to create, no password, nothing to
 install. Open it in your browser and write. The link works for 30 days;
-if it ever stops working, ask me for a fresh one and I'll send it over.
+if it ever stops working, ask me for a fresh one and I'll send it.
 
-What Phloem is, in a sentence: a writing tool where the document
+What Phloem is: a writing tool where the document
 remembers how it was written — and can show that story back to you, so
 nobody ever has to take your word for how a piece of work came to be.
 
@@ -48,7 +50,7 @@ Three things to try:
    came from. It never comments on your writing, and it never speaks
    unless you ask.
 
-3. When you've written something real — fifteen minutes is plenty —
+3. When you've written something real — a few minutes is plenty —
    press Option and choose "report". That's the heart of it: have a
    read of what it says about how you wrote.
 
@@ -68,9 +70,7 @@ Worth knowing:
   it. If something seems odd, broken, or missing, that's genuinely the
   most useful thing you can tell me — just reply to this email.
 
-- The full, honest detail — what it records, what it sends and where,
-  what it can't do — is written up at https://phloem.nz/questions/ for
-  you, or your parents, to read any time.
+- The full Q&A is at https://phloem.nz/questions/
 
 Happy writing,
 
