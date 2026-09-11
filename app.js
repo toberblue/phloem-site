@@ -131,6 +131,12 @@ function handleContact(req, res) {
     // Time-trap: the page stamps ms-since-load at submit. No stamp means no
     // script ran (HTML-parsing bot); under 6s means nobody read anything.
     // Suspect mail is tagged, never dropped — a human is never locked out.
+    // WHICH DOOR THIS CAME THROUGH (2026-09-12, the gardener, after the
+    // in-app feedback panel's first live message arrived dressed as a
+    // site contact): the app's panel sends source=app, and the subject
+    // says so. Anything else — the website form, a bot's guess — reads
+    // as the site, exactly as before.
+    const fromApp = (form.get('source') || '') === 'app';
     const rawElapsed = form.get('elapsed');
     const elapsed = rawElapsed ? Number(rawElapsed) : NaN;
     const suspect = !Number.isFinite(elapsed) || elapsed < 6000 || elapsed > 86_400_000;
@@ -150,12 +156,13 @@ function handleContact(req, res) {
       `To: ${CONTACT_TO}`,
       `From: Phloem site <noreply@phloem.nz>`,
       `Reply-To: ${headerSafe(name ? `${name} <${email}>` : email)}`,
-      `Subject: ${headerSafe((suspect ? '[suspect] ' : '') + 'Phloem site contact' + (platforms.length ? ` — test on ${platforms.join(', ')}` : ''))}`,
+      `Subject: ${headerSafe((suspect ? '[suspect] ' : '') + (fromApp ? 'Phloem app feedback' : 'Phloem site contact') + (platforms.length ? ` — test on ${platforms.join(', ')}` : ''))}`,
       'Content-Type: text/plain; charset=utf-8',
       '',
       `Name: ${name || '(not given)'}`,
       `Email: ${email}`,
       `Test platforms: ${platforms.length ? platforms.join(', ') : '(none ticked)'}`,
+      `Via: ${fromApp ? "the app's feedback door" : 'the website form'}`,
       `IP: ${ip}`,
       `Form time: ${Number.isFinite(elapsed) ? Math.round(elapsed / 1000) + 's' : 'no stamp (no script ran)'}`,
       '',
