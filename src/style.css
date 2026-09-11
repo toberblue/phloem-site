@@ -102,6 +102,7 @@ footer{
    max-width is what wraps it to two lines. */
 .hero{position:relative;}
 .topnav{position:absolute; top:5rem; left:1.25rem; max-width:7.5rem; text-align:left; line-height:1.5;}
+.topnav.right{left:auto; right:1.25rem; text-align:right;}
 .topnav a{font-weight:600; font-size:.95rem; color:var(--muted);}
 .topnav a:hover{color:var(--accent); text-decoration:none;}
 /* Inner pages (/questions/): a quieter head than the hero. */
