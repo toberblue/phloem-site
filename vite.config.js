@@ -11,6 +11,7 @@ export default defineConfig({
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
         questions: resolve(import.meta.dirname, 'questions/index.html'),
+        news: resolve(import.meta.dirname, 'news/index.html'),
       },
     },
   },
