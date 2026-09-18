@@ -37,6 +37,10 @@
      ------------------------------------------------------------------------- */
 
   --paper: #ffffff;
+  /* THE PLAIN LEAF'S PAPER (2026-09-18): a cool grey, as the workings is
+     yellow — the page saying what it is. Never the workings' colour. */
+  --plain-paper: #eef1f4;
+  --plain-shadow-tint: rgba(70, 90, 110, 0.35);
   --desk: #eceff1;
 
   /* The sheet's drop shadow — how far the paper floats above the desk. A
@@ -210,6 +214,8 @@
   :root {
     /* §1 paper and desk */
     --paper: #23272a;
+    --plain-paper: #1f2630;
+    --plain-shadow-tint: rgba(120, 150, 180, 0.35);
     --desk: #16181a;
     --shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
     /* --page-w is scheme-independent and is not restated. */
